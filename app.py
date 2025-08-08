@@ -304,6 +304,15 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
+@app.route('/init-db')
+def init_database():
+    """Initialize database manually"""
+    try:
+        initialize_database()
+        return jsonify({'status': 'success', 'message': 'Database initialized successfully!'})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)})
+
 # User Management Routes
 @app.route('/users')
 @login_required
@@ -1204,7 +1213,11 @@ def init_app():
                 print(f"❌ Failed to initialize database: {e2}")
 
 # Initialize when module is imported
-init_app()
+try:
+    init_app()
+except Exception as e:
+    print(f"⚠️  Initialization warning: {e}")
+    print("🔄 Will retry on first request...")
 
 if __name__ == '__main__':
     print("\n🚀 Starting Simple CRM System...")
