@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}New Custom Object - Simple CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-cogs me-2"></i>New Custom Object</h1>
+    <a href="{{ url_for('custom_objects') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-1"></i>Back to Custom Objects
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Create Custom Object</h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Object Name *</label>
+                    <input type="text" class="form-control" id="name" name="name" required 
+                           placeholder="e.g., Product, Project, Case">
+                    <small class="form-text text-muted">Use singular form, no spaces (e.g., Product, Project)</small>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="label" class="form-label">Display Label *</label>
+                    <input type="text" class="form-control" id="label" name="label" required 
+                           placeholder="e.g., Product, Project, Case">
+                    <small class="form-text text-muted">Human-readable name for the object</small>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" 
+                          placeholder="Describe the purpose of this custom object"></textarea>
+            </div>
+            
+            <hr>
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Fields</h5>
+                <button type="button" class="btn btn-success btn-sm" onclick="addField()">
+                    <i class="fas fa-plus me-1"></i>Add Field
+                </button>
+            </div>
+            
+            <div id="fields-container">
+                <!-- Fields will be added here dynamically -->
+            </div>
+            
+            <div class="d-flex justify-content-end mt-4">
+                <a href="{{ url_for('custom_objects') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>Create Custom Object
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+let fieldCount = 0;
+
+function addField() {
+    fieldCount++;
+    const container = document.getElementById('fields-container');
+    
+    const fieldHtml = `
+        <div class="card mb-3 field-row" id="field-${fieldCount}">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label">Field Name *</label>
+                        <input type="text" class="form-control" name="field_name[]" required 
+                               placeholder="e.g., name, price, status">
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <label class="form-label">Field Type *</label>
+                        <select class="form-control" name="field_type[]" required>
+                            <option value="">Select Type</option>
+                            <option value="text">Text</option>
+                            <option value="email">Email</option>
+                            <option value="number">Number</option>
+                            <option value="date">Date</option>
+                            <option value="textarea">Text Area</option>
+                            <option value="select">Select (Dropdown)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Display Label *</label>
+                        <input type="text" class="form-control" name="field_label[]" required 
+                               placeholder="e.g., Name, Price, Status">
+                    </div>
+                    <div class="col-md-1 mb-2 d-flex align-items-end">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeField(${fieldCount})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', fieldHtml);
+}
+
+function removeField(fieldId) {
+    const field = document.getElementById(`field-${fieldId}`);
+    field.remove();
+}
+
+// Add initial field when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    addField();
+});
+</script>
+{% endblock %} 

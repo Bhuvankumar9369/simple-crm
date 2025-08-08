@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}{% if permission_set %}Edit Permission Set{% else %}New Permission Set{% endif %} - Simple CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="fas fa-shield-alt me-2"></i>
+        {% if permission_set %}Edit Permission Set{% else %}New Permission Set{% endif %}
+    </h1>
+    <a href="{{ url_for('permission_sets') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-1"></i>Back to Permission Sets
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            {% if permission_set %}Edit Permission Set Information{% else %}Create New Permission Set{% endif %}
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="name" class="form-label">Permission Set Name *</label>
+                    <input type="text" class="form-control" id="name" name="name" 
+                           value="{{ permission_set.name if permission_set else '' }}" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea class="form-control" id="description" name="description" rows="3">{{ permission_set.description if permission_set else '' }}</textarea>
+                </div>
+            </div>
+            
+            {% if permission_set %}
+            <div class="mb-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="is_active" name="is_active" 
+                           {% if permission_set.is_active %}checked{% endif %}>
+                    <label class="form-check-label" for="is_active">
+                        Active Permission Set
+                    </label>
+                </div>
+            </div>
+            {% endif %}
+            
+            <hr class="my-4">
+            
+            <!-- Standard Objects Permissions -->
+            <h5 class="mb-3"><i class="fas fa-cube me-2"></i>Standard Objects</h5>
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Object</th>
+                            <th>View</th>
+                            <th>Create</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Contacts</strong></td>
+                            <td class="text-center">
+                                <input type="checkbox" name="contact_view" 
+                                       {% if permissions.get('contact_general', {}).get('view', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="contact_create" 
+                                       {% if permissions.get('contact_general', {}).get('create', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="contact_edit" 
+                                       {% if permissions.get('contact_general', {}).get('edit', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="contact_delete" 
+                                       {% if permissions.get('contact_general', {}).get('delete', False) %}checked{% endif %}>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Accounts</strong></td>
+                            <td class="text-center">
+                                <input type="checkbox" name="account_view" 
+                                       {% if permissions.get('account_general', {}).get('view', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="account_create" 
+                                       {% if permissions.get('account_general', {}).get('create', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="account_edit" 
+                                       {% if permissions.get('account_general', {}).get('edit', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="account_delete" 
+                                       {% if permissions.get('account_general', {}).get('delete', False) %}checked{% endif %}>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Opportunities</strong></td>
+                            <td class="text-center">
+                                <input type="checkbox" name="opportunity_view" 
+                                       {% if permissions.get('opportunity_general', {}).get('view', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="opportunity_create" 
+                                       {% if permissions.get('opportunity_general', {}).get('create', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="opportunity_edit" 
+                                       {% if permissions.get('opportunity_general', {}).get('edit', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="opportunity_delete" 
+                                       {% if permissions.get('opportunity_general', {}).get('delete', False) %}checked{% endif %}>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Leads</strong></td>
+                            <td class="text-center">
+                                <input type="checkbox" name="lead_view" 
+                                       {% if permissions.get('lead_general', {}).get('view', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="lead_create" 
+                                       {% if permissions.get('lead_general', {}).get('create', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="lead_edit" 
+                                       {% if permissions.get('lead_general', {}).get('edit', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="lead_delete" 
+                                       {% if permissions.get('lead_general', {}).get('delete', False) %}checked{% endif %}>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Custom Objects Permissions -->
+            {% if custom_objects %}
+            <h5 class="mb-3"><i class="fas fa-cogs me-2"></i>Custom Objects</h5>
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Custom Object</th>
+                            <th>View</th>
+                            <th>Create</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for custom_obj in custom_objects %}
+                        <tr>
+                            <td><strong>{{ custom_obj.label }}</strong><br><small class="text-muted">{{ custom_obj.name }}</small></td>
+                            <td class="text-center">
+                                <input type="checkbox" name="custom_{{ custom_obj.id }}_view" 
+                                       {% if permissions.get('custom_object_' + custom_obj.id|string, {}).get('view', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="custom_{{ custom_obj.id }}_create" 
+                                       {% if permissions.get('custom_object_' + custom_obj.id|string, {}).get('create', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="custom_{{ custom_obj.id }}_edit" 
+                                       {% if permissions.get('custom_object_' + custom_obj.id|string, {}).get('edit', False) %}checked{% endif %}>
+                            </td>
+                            <td class="text-center">
+                                <input type="checkbox" name="custom_{{ custom_obj.id }}_delete" 
+                                       {% if permissions.get('custom_object_' + custom_obj.id|string, {}).get('delete', False) %}checked{% endif %}>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>No custom objects found. Create custom objects to manage their permissions.
+            </div>
+            {% endif %}
+
+            <div class="d-flex justify-content-end">
+                <a href="{{ url_for('permission_sets') }}" class="btn btn-outline-secondary me-2">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save me-1"></i>
+                    {% if permission_set %}Update Permission Set{% else %}Create Permission Set{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Auto-check parent permissions when child is checked
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const name = this.name;
+            const isChecked = this.checked;
+            
+            // If checking a higher permission, check lower permissions too
+            if (isChecked) {
+                if (name.includes('_delete')) {
+                    // If delete is checked, check edit, create, and view
+                    const baseName = name.replace('_delete', '');
+                    document.querySelector(`input[name="${baseName}_edit"]`).checked = true;
+                    document.querySelector(`input[name="${baseName}_create"]`).checked = true;
+                    document.querySelector(`input[name="${baseName}_view"]`).checked = true;
+                } else if (name.includes('_edit')) {
+                    // If edit is checked, check create and view
+                    const baseName = name.replace('_edit', '');
+                    document.querySelector(`input[name="${baseName}_create"]`).checked = true;
+                    document.querySelector(`input[name="${baseName}_view"]`).checked = true;
+                } else if (name.includes('_create')) {
+                    // If create is checked, check view
+                    const baseName = name.replace('_create', '');
+                    document.querySelector(`input[name="${baseName}_view"]`).checked = true;
+                }
+            } else {
+                // If unchecking a lower permission, uncheck higher permissions too
+                if (name.includes('_view')) {
+                    // If view is unchecked, uncheck create, edit, and delete
+                    const baseName = name.replace('_view', '');
+                    document.querySelector(`input[name="${baseName}_create"]`).checked = false;
+                    document.querySelector(`input[name="${baseName}_edit"]`).checked = false;
+                    document.querySelector(`input[name="${baseName}_delete"]`).checked = false;
+                } else if (name.includes('_create')) {
+                    // If create is unchecked, uncheck edit and delete
+                    const baseName = name.replace('_create', '');
+                    document.querySelector(`input[name="${baseName}_edit"]`).checked = false;
+                    document.querySelector(`input[name="${baseName}_delete"]`).checked = false;
+                } else if (name.includes('_edit')) {
+                    // If edit is unchecked, uncheck delete
+                    const baseName = name.replace('_edit', '');
+                    document.querySelector(`input[name="${baseName}_delete"]`).checked = false;
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

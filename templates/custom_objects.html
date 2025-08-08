@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Custom Objects - Simple CRM{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-cogs me-2"></i>Custom Objects</h1>
+    <a href="{{ url_for('new_custom_object') }}" class="btn btn-primary">
+        <i class="fas fa-plus me-1"></i>New Custom Object
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">All Custom Objects</h5>
+    </div>
+    <div class="card-body">
+        {% if objects %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Object Name</th>
+                            <th>Label</th>
+                            <th>Description</th>
+                            <th>Fields</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for obj in objects %}
+                        <tr>
+                            <td><strong>{{ obj.name }}</strong></td>
+                            <td>{{ obj.label }}</td>
+                            <td>{{ obj.description or '-' }}</td>
+                            <td>
+                                {% set fields = obj.fields|from_json %}
+                                <span class="badge bg-info">{{ fields|length if fields else 0 }} fields</span>
+                            </td>
+                            <td>{{ obj.created_at.strftime('%b %d, %Y') }}</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="{{ url_for('custom_records', id=obj.id) }}" class="btn btn-sm btn-outline-success">
+                                        <i class="fas fa-list"></i> Records
+                                    </a>
+                                    <a href="{{ url_for('new_custom_record', id=obj.id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-plus"></i> Add Record
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-cogs fa-3x text-muted mb-3"></i>
+                <h5 class="text-muted">No custom objects found</h5>
+                <p class="text-muted">Create custom objects to store additional data specific to your business needs.</p>
+                <a href="{{ url_for('new_custom_object') }}" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i>Create Custom Object
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 
